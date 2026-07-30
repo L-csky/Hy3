@@ -1,23 +1,28 @@
-# 02｜流式请求与逐 chunk 解析
+<p align="left">
+  English&nbsp;|&nbsp;<a href="./02_streaming_CN.md">Chinese</a>
+</p>
 
-完整程序：[02_streaming.py](02_streaming.py)
+# 02 | Streaming Requests and Per-Chunk Parsing
 
-## 请求与解析
+Complete program: [02_streaming.py](02_streaming.py)
 
-流式请求设置 `stream=True`，返回的是可迭代事件流，不是一个完整 response。
-每个 chunk 可能只携带 role、正文的一小段、思考增量、结束原因或 usage；不能假设
-每个 chunk 都有 choice 或 content。
+## Request and Parsing
+
+A streaming request sets `stream=True` and returns an iterable event stream,
+not one complete response. A chunk may contain only a role, a small content
+delta, a reasoning delta, a finish reason, or usage. Do not assume that every
+chunk contains a choice or content.
 
 ```python
 stream = client.chat.completions.create(
     model=settings.model,
-    messages=[{"role": "user", "content": "解释流式输出。"}],
+    messages=[{"role": "user", "content": "Explain streaming output."}],
     stream=True,
     stream_options={"include_usage": True},
 )
 parts = []
 for chunk in stream:
-    if not chunk.choices:  # 最后的 usage-only chunk 可能走这里
+    if not chunk.choices:  # The final usage-only chunk may enter here.
         continue
     delta = chunk.choices[0].delta
     if delta.content:
@@ -26,14 +31,15 @@ for chunk in stream:
 full_text = "".join(parts)
 ```
 
-程序同时独立累积 `reasoning_content`，但默认不打印完整推理内容。工具调用的
-arguments 也可能跨多个 chunk 到达；生产实现必须按 tool-call index/id 累积，不能
-对单个片段直接做 `json.loads`。
+The program accumulates `reasoning_content` separately but does not print
+complete reasoning by default. Tool-call arguments can also span multiple
+chunks. Production code must accumulate them by tool-call index or ID instead
+of calling `json.loads` on an individual fragment.
 
-## 输出示例
+## Example Output
 
 ```text
-assistant: 流式输出让用户在完整答案生成前就能看到内容……
+assistant: Streaming lets users see content before the complete answer...
 
 === Aggregated result ===
 content_chars: 168
@@ -42,5 +48,7 @@ finish_reason: stop
 total_tokens: 102
 ```
 
-如果服务没有实现 `stream_options.include_usage`，脚本会明确提示 usage 缺失，正文
-仍可正常解析。运行：`python 02_streaming.py`。
+If the service does not implement `stream_options.include_usage`, the script
+reports that usage is missing while still parsing the content normally.
+
+Run with `python 02_streaming.py`.

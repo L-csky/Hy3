@@ -1,49 +1,59 @@
-# 06｜错误处理、重试与退避
+<p align="left">
+  English&nbsp;|&nbsp;<a href="./06_error_handling_retry_CN.md">Chinese</a>
+</p>
 
-完整程序：[06_error_handling_retry.py](06_error_handling_retry.py)
+# 06 | Error Handling, Retries, and Backoff
 
-## 错误分类
+Complete program: [06_error_handling_retry.py](06_error_handling_retry.py)
 
-| 类型 | 是否重试 | 原因 |
+## Error Classification
+
+| Type | Retry? | Reason |
 | --- | --- | --- |
-| 超时、连接失败 | 是，有限次数 | 常为短暂网络问题 |
-| 408、409、429 | 是 | 请求超时、冲突或限流可能恢复 |
-| 500、502、503、504 | 是 | 短暂服务异常 |
-| 400 | 否 | 请求内容错误，原样重试无效 |
-| 401、403 | 否 | 凭据或权限问题，重试无效 |
-| 其他未知异常 | 否 | 避免掩盖程序错误 |
+| Timeout or connection failure | Yes, a limited number | Often a transient network problem |
+| 408, 409, 429 | Yes | Timeout, conflict, or rate limiting may recover |
+| 500, 502, 503, 504 | Yes | Transient service failure |
+| 400 | No | Retrying the same invalid request cannot succeed |
+| 401, 403 | No | Credentials or permissions require intervention |
+| Other unknown exception | No | Avoid hiding application defects |
 
-本示例把 SDK 的 `max_retries` 设为 0，让所有重试都由可见代码负责，避免 SDK 和
-业务代码形成重试乘法。
+The example sets the SDK's `max_retries` to 0 so that all retries remain
+visible in application code and SDK retries do not multiply application
+retries.
 
-## 等待策略
+## Wait Strategy
 
-若响应有 `Retry-After`，支持秒数和 HTTP 日期两种格式，并按服务端要求等待；否则使用：
+When a response contains `Retry-After`, the code supports both seconds and HTTP
+date formats and waits as instructed. Otherwise it uses:
 
 ```text
-min(base × 2^attempt + random(0, 1) × base, cap)
+min(base * 2^attempt + random(0, 1) * base, cap)
 ```
 
-jitter 防止多个客户端在同一时刻再次冲击服务。除了 `max_attempts=4`，程序还有
-`max_total_wait=60` 总等待预算；如果 `Retry-After` 超出剩余预算，程序会停止并将
-控制权交给调用方，而不是提前重试。
+Jitter prevents multiple clients from retrying at the same instant. In addition
+to `max_attempts=4`, the program has a `max_total_wait=60` budget. If
+`Retry-After` exceeds the remaining budget, it stops and returns control to the
+caller instead of retrying early.
 
 ```python
 response = call_with_retry(
     lambda: client.chat.completions.create(
         model=settings.model,
-        messages=[{"role": "user", "content": "解释指数退避。"}],
+        messages=[{"role": "user", "content": "Explain exponential backoff."}],
     )
 )
 ```
 
-## 输出示例
+## Example Output
 
 ```text
 attempt 1 failed with RateLimitError; retrying in 2.00s
 attempt 2 failed with APIConnectionError; retrying in 2.37s
-assistant: 指数退避是在连续失败后逐步增加等待时间的重试策略。
+assistant: Exponential backoff increases the delay after consecutive failures.
 ```
 
-生产环境还应记录脱敏 request ID、状态码、尝试次数和延迟，并结合幂等性判断是否
-能重试有副作用的业务操作。运行：`python 06_error_handling_retry.py`。
+Production systems should also record redacted request IDs, status codes,
+attempt counts, and latency. Consider idempotency before retrying operations
+with side effects.
+
+Run with `python 06_error_handling_retry.py`.

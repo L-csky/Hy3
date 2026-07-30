@@ -1,16 +1,21 @@
-# Hy3 API 可运行示例
+<p align="left">
+  English&nbsp;|&nbsp;<a href="./README_CN.md">Chinese</a>
+</p>
 
-本目录对应仓库根目录的 [中文快速开始](../../quickstart_CN.md) 和
-[English quickstart](../../quickstart.md)。六个示例互相独立，可按编号依次运行。
+# Runnable Hy3 API Examples
 
-## 1. 准备环境
+This directory accompanies the repository's
+[English quickstart](../../quickstart.md). The six examples are independent and
+can be run in numbered order.
+
+## 1. Set Up the Environment
 
 ```bash
 cd examples/api
 python -m venv .venv
 ```
 
-激活虚拟环境：
+Activate the virtual environment:
 
 ```bash
 # Linux / macOS
@@ -20,7 +25,7 @@ source .venv/bin/activate
 .venv\Scripts\Activate.ps1
 ```
 
-安装依赖并创建本地配置：
+Install the dependencies and create a local configuration:
 
 ```bash
 python -m pip install -r requirements.txt
@@ -28,21 +33,21 @@ cp .env.example .env                 # Linux / macOS
 Copy-Item .env.example .env          # Windows PowerShell
 ```
 
-编辑 `.env`，填入 TokenHub API Key。若使用本地 vLLM/SGLang，则切换
-`HY3_API_MODE=self_hosted`，并使用本地服务地址。
+Edit `.env` and add your TokenHub API key. For a local vLLM/SGLang service, set
+`HY3_API_MODE=self_hosted` and use the local service URL.
 
-## 2. 示例索引
+## 2. Example Index
 
-| 编号 | 脚本 | 学习目标 | 配套文档 |
+| No. | Script | Learning goal | Detailed guide |
 | --- | --- | --- | --- |
-| 01 | `01_basic_chat.py` | 单轮、多轮、usage | [说明](01_basic_chat.md) |
-| 02 | `02_streaming.py` | 逐 chunk 解析与安全拼接 | [说明](02_streaming.md) |
-| 03 | `03_streaming_vs_non_streaming.py` | TTFT 与总耗时 | [说明](03_streaming_vs_non_streaming.md) |
-| 04 | `04_tool_calling.py` | 单次调用与有界工具循环 | [说明](04_tool_calling.md) |
-| 05 | `05_reasoning_mode.py` | 思考模式开/关对比 | [说明](05_reasoning_mode.md) |
-| 06 | `06_error_handling_retry.py` | 分类重试与退避 | [说明](06_error_handling_retry.md) |
+| 01 | `01_basic_chat.py` | Single-turn and multi-turn chat, plus usage | [Guide](01_basic_chat.md) |
+| 02 | `02_streaming.py` | Per-chunk parsing and safe aggregation | [Guide](02_streaming.md) |
+| 03 | `03_streaming_vs_non_streaming.py` | Time to first token and total latency | [Guide](03_streaming_vs_non_streaming.md) |
+| 04 | `04_tool_calling.py` | One call and a bounded tool loop | [Guide](04_tool_calling.md) |
+| 05 | `05_reasoning_mode.py` | Reasoning on/off comparison | [Guide](05_reasoning_mode.md) |
+| 06 | `06_error_handling_retry.py` | Error classification and backoff | [Guide](06_error_handling_retry.md) |
 
-运行方式：
+Run the examples:
 
 ```bash
 python 01_basic_chat.py
@@ -53,10 +58,13 @@ python 05_reasoning_mode.py
 python 06_error_handling_retry.py
 ```
 
-## 3. 安全与复现约定
+## 3. Security and Reproducibility
 
-- API Key 只从环境变量或被 Git 忽略的 `.env` 读取。
-- 示例不会打印 API Key。
-- 文档中的输出是脱敏的格式示例；延迟和内容以实际运行结果为准。
-- 工具调用示例只执行代码中显式注册的本地函数，不执行模型生成的任意代码。
-- 重试示例设置最大尝试次数和最大等待时间，避免无限重试。
+- API keys are read only from environment variables or a Git-ignored `.env`.
+- The examples never print an API key.
+- Documented outputs are redacted structural examples. Actual content and
+  latency vary between runs.
+- The tool-calling example executes only local functions explicitly registered
+  in the code. It does not execute arbitrary model-generated code.
+- The retry example limits both attempts and total wait time to prevent
+  unbounded retries.

@@ -1,17 +1,24 @@
-# 04｜一次工具调用与多轮工具循环
+<p align="left">
+  English&nbsp;|&nbsp;<a href="./04_tool_calling_CN.md">Chinese</a>
+</p>
 
-完整程序：[04_tool_calling.py](04_tool_calling.py)
+# 04 | One Tool Call and a Multi-Round Tool Loop
 
-## 完整协议循环
+Complete program: [04_tool_calling.py](04_tool_calling.py)
 
-1. 请求包含 `tools` JSON Schema 和 `tool_choice="auto"`。
-2. 解析 assistant 的 `tool_calls`，而不是从自然语言猜工具。
-3. 用白名单解析工具名，使用 `json.loads` 后确认参数是对象。
-4. 业务侧执行函数，将结果序列化为字符串。
-5. 将完整 assistant 消息和 `role="tool"` 结果追加到 messages。
-6. 继续请求，直到 assistant 不再调用工具或达到安全轮数。
+## Complete Protocol Loop
 
-第一轮请求：
+1. Send a request with a `tools` JSON Schema and `tool_choice="auto"`.
+2. Read the assistant's `tool_calls` instead of guessing tools from prose.
+3. Resolve the tool through an allowlist and verify that decoded JSON arguments
+   form an object.
+4. Execute the function in the application and serialize its result as text.
+5. Append the complete assistant message and a `role="tool"` result to
+   `messages`.
+6. Continue until the assistant stops requesting tools or the safety limit is
+   reached.
+
+First request:
 
 ```python
 response = client.chat.completions.create(
@@ -24,7 +31,7 @@ response = client.chat.completions.create(
 )
 ```
 
-回填工具结果：
+Return the tool result:
 
 ```python
 messages.append(assistant_message_dict(message))
@@ -37,22 +44,25 @@ messages.append(
 )
 ```
 
-`assistant_message_dict` 会保留 `content`、`tool_calls` 以及慢思考工具流程需要的
-`reasoning_content`。示例天气函数返回固定数据，不调用外网，便于复现。
+`assistant_message_dict` preserves `content`, `tool_calls`, and the
+`reasoning_content` required by reasoning-plus-tool flows. The example weather
+function returns fixed data and does not access the internet.
 
-## 安全边界
+## Security Boundaries
 
-- 只允许 `TOOL_REGISTRY` 中的函数。
-- 不使用 `eval`/`exec`，不执行模型生成的命令。
-- 参数 JSON 错误或函数参数不匹配时，把受控错误作为工具结果返回。
-- 工具循环最多四轮，防止模型反复调用。
-- 真实工具还需要权限校验、超时、审计和输出长度限制。
+- Allow only functions registered in `TOOL_REGISTRY`.
+- Do not use `eval` or `exec`, and do not execute model-generated commands.
+- Return controlled tool errors for invalid JSON or mismatched arguments.
+- Limit the tool loop to four rounds.
+- Real tools also require permission checks, timeouts, auditing, and output
+  limits.
 
 ```text
 round 1: finish_reason=tool_calls
-tool_call: get_weather({"city":"深圳"})
+tool_call: get_weather({"city":"Shenzhen"})
 round 2: finish_reason=stop
-final answer: 深圳当前示例天气为晴，26°C……
+final answer: The example weather in Shenzhen is sunny, 26 C...
 ```
 
-模型是否调用工具具有采样差异；输出仅为格式示例。运行：`python 04_tool_calling.py`。
+Tool selection varies with sampling; the output is structural only. Run with
+`python 04_tool_calling.py`.

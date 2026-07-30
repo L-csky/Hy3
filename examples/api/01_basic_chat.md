@@ -1,23 +1,29 @@
-# 01｜基础对话：单轮与多轮
+<p align="left">
+  English&nbsp;|&nbsp;<a href="./01_basic_chat_CN.md">Chinese</a>
+</p>
 
-完整程序：[01_basic_chat.py](01_basic_chat.py)
+# 01 | Basic Chat: Single-Turn and Multi-Turn
 
-## 请求流程
+Complete program: [01_basic_chat.py](01_basic_chat.py)
 
-单轮请求只包含一条 user 消息。脚本发送 `model`、`messages`、采样参数和
-`max_tokens`，然后解析 `response.id`、第一条 choice、`finish_reason`、assistant
-正文和 usage。
+## Request Flow
 
-多轮对话并不是服务端自动保存会话。第二次请求必须按顺序包含：system 指令、
-第一条 user、第一条 assistant、第二条 user。遗漏 assistant 历史会让模型失去
-上一轮回答；历史不断增长时，应在业务侧控制上下文长度。
+A single-turn request contains one user message. The script sends `model`,
+`messages`, sampling parameters, and `max_tokens`, then reads `response.id`, the
+first choice, `finish_reason`, the assistant content, and usage.
 
-核心请求和解析：
+The server does not automatically preserve a multi-turn conversation. The
+second request must contain, in order, the system instruction, first user
+message, first assistant response, and second user message. Omitting the
+assistant history removes context from the previous turn. Applications should
+also control context growth as the conversation becomes longer.
+
+Core request and response parsing:
 
 ```python
 response = client.chat.completions.create(
     model=settings.model,
-    messages=[{"role": "user", "content": "用三句话介绍 Hy3。"}],
+    messages=[{"role": "user", "content": "Introduce Hy3 in three sentences."}],
     temperature=0.9,
     top_p=1.0,
     max_tokens=256,
@@ -28,28 +34,30 @@ print(choice.finish_reason)
 print(response.usage.total_tokens if response.usage else "no usage")
 ```
 
-## 响应字段
+## Response Fields
 
-- `choices[0].message.content`：最终文本。
-- `finish_reason=stop`：自然或 stop 条件结束。
-- `finish_reason=length`：达到输出预算，答案可能不完整。
-- `usage`：输入、输出和总 Token 数；兼容服务可以不返回该字段。
+- `choices[0].message.content`: Final text.
+- `finish_reason=stop`: Generation ended naturally or matched a stop condition.
+- `finish_reason=length`: The output budget was reached and the answer may be
+  incomplete.
+- `usage`: Input, output, and total token counts. Compatible services may omit
+  this field.
 
-## 输出示例
+## Example Output
 
-以下只展示格式，内容与 Token 数以运行结果为准：
+The following shows only the output structure. Content and token counts vary:
 
 ```text
 === Single-turn chat ===
 id: chatcmpl-REDACTED
 finish_reason: stop
-assistant: Hy3 是……
+assistant: Hy3 is...
 usage: prompt=18, completion=72, total=90
 
 === Multi-turn chat ===
-assistant[1]: 列表推导式……
-assistant[2]: 可以写成 [x for x in values if x % 2 == 0]。
+assistant[1]: A list comprehension...
+assistant[2]: You can write [x for x in values if x % 2 == 0].
 usage: prompt=96, completion=35, total=131
 ```
 
-运行：`python 01_basic_chat.py`。
+Run with `python 01_basic_chat.py`.

@@ -8,12 +8,17 @@ This guide helps developers make their first Hy3 API request in about five
 minutes and learn chat, streaming, tool calling, reasoning modes, and reliable
 retries in about thirty minutes.
 
-Hy3 provides an OpenAI-compatible Chat Completions API with two access modes:
+Hy3 provides an OpenAI-compatible Chat Completions API with two API access
+modes:
 
 - **TokenHub hosted API**: Create an API key and enable a service without
   deploying the model yourself.
-- **Self-hosted service**: Follow the [README](README.md#deployment)
-  to start Hy3 with vLLM or SGLang, then call its local OpenAI-compatible API.
+- **Self-hosted API**: Follow the [README](README.md#deployment) to deploy Hy3
+  with vLLM or SGLang, then call the OpenAI-compatible API exposed by that
+  service.
+
+This guide covers API usage for both services. It does not cover model
+downloads, GPU planning, or server deployment.
 
 ## 1. Basic Information
 

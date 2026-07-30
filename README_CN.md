@@ -108,10 +108,14 @@ Hy3 在软件开发、办公生产、金融建模、前端设计、游戏制作�
 
 ## 快速开始
 
-如需五分钟完成云端/本地 API 调用并学习六个可运行示例，请参阅
-[Hy3 API 中文快速开始](quickstart_CN.md) 和 [`examples/api`](examples/api/README.md)。
+Hy3 支持两种 API 接入方式：直接调用 TokenHub 托管 API，或先通过
+[vLLM](#使用-vllm-推理) / [SGLang](#使用-sglang-推理) 部署模型，再调用自托管的
+OpenAI 兼容 API。请求参数、客户端调用方式和六个可运行示例请参阅
+[Hy3 API 中文快速开始](quickstart_CN.md) 和
+[`examples/api`](examples/api/README_CN.md)；
+模型部署步骤请参阅下方[推理和部署](#推理和部署)章节。
 
-建议先通过 [vLLM](#使用-vllm-推理) 或 [SGLang](#使用-sglang-推理) 部署服务，然后通过 OpenAI 兼容 API 调用：
+以下代码演示如何调用已经部署的本地服务：
 
 ```python
 from openai import OpenAI
@@ -134,8 +138,6 @@ print(response.choices[0].message.content)
 > **推荐参数**：`temperature=0.9`，`top_p=1.0`。
 >
 > **推理模式**：复杂任务（数学、编程、推理）建议设置 `reasoning_effort="high"`，日常对话可使用默认的 `"no_think"` 直接回复。
-
-具体部署方式请参考下方[推理和部署](#推理和部署)章节。
 
 ## 推理和部署
 

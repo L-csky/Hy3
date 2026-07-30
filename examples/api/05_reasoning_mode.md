@@ -1,26 +1,32 @@
-# 05｜思考模式开关对比
+<p align="left">
+  English&nbsp;|&nbsp;<a href="./05_reasoning_mode_CN.md">Chinese</a>
+</p>
 
-完整程序：[05_reasoning_mode.py](05_reasoning_mode.py)
+# 05 | Comparing Reasoning Modes
 
-脚本对同一道题分别发送 `no_think` 和 `high`，记录总耗时、输出 Token 数、
-`reasoning_content` 长度和最终回答。TokenHub 与自托管服务参数位置不同，
-`common.reasoning_extra_body` 会根据 `HY3_API_MODE` 生成正确结构：
+Complete program: [05_reasoning_mode.py](05_reasoning_mode.py)
+
+The script sends the same problem with `no_think` and `high`, recording total
+latency, output tokens, `reasoning_content` length, and the final answer.
+TokenHub and self-hosted services place these parameters differently.
+`common.reasoning_extra_body` generates the correct structure from
+`HY3_API_MODE`:
 
 ```python
-# TokenHub 开启深度思考
+# Enable deep reasoning on TokenHub.
 {"thinking": {"type": "enabled"}, "reasoning_effort": "high"}
 
-# TokenHub 关闭思考
+# Disable reasoning on TokenHub.
 {"thinking": {"type": "disabled"}}
 
-# TokenHub 也支持 medium 推理深度
+# TokenHub also supports medium reasoning depth.
 {"thinking": {"type": "enabled"}, "reasoning_effort": "medium"}
 
-# 自托管 chat template
+# Self-hosted chat template.
 {"chat_template_kwargs": {"reasoning_effort": "high"}}
 ```
 
-完整调用：
+Complete call:
 
 ```python
 response = client.chat.completions.create(
@@ -33,24 +39,26 @@ response = client.chat.completions.create(
 )
 ```
 
-## 输出示例
+## Example Output
 
 ```text
 === reasoning_effort=no_think ===
 elapsed: 1.532s
 completion_tokens: 83
 reasoning_chars: 0
-answer: 净注水速度为 1/6 - 1/9 = 1/18……
+answer: The net fill rate is 1/6 - 1/9 = 1/18...
 
 === reasoning_effort=high ===
 elapsed: 3.876s
 completion_tokens: 216
 reasoning_chars: 294
-answer: ……因此需要 18 小时。
+answer: Therefore, filling the pool takes 18 hours.
 ```
 
-不要凭一次调用断言某模式更快或更好。对真实业务题集多次运行，评估正确率、总耗时
-和费用。思考模式需要更大的 `max_tokens`；不要把完整推理内容写入包含敏感数据的
-日志。服务版本不支持某个取值时会返回 400，应以目标服务文档为准。
+Do not conclude that one mode is faster or better from a single request.
+Evaluate accuracy, total latency, and cost over repeated runs on a real task
+set. Reasoning needs a larger `max_tokens` budget. Do not log complete reasoning
+that contains sensitive data. An unsupported value returns HTTP 400, so follow
+the target service documentation.
 
-运行：`python 05_reasoning_mode.py`。
+Run with `python 05_reasoning_mode.py`.

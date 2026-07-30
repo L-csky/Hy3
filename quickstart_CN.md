@@ -7,11 +7,13 @@
 本指南帮助开发者在约 5 分钟内完成第一次 Hy3 API 调用，并在约 30 分钟内掌握
 对话、流式输出、工具调用、思考模式和可靠重试。
 
-Hy3 提供 OpenAI 兼容的 Chat Completions API，支持两种接入方式：
+Hy3 提供 OpenAI 兼容的 Chat Completions API，支持两种 API 接入方式：
 
 - **TokenHub 托管 API**：无需部署模型，开通服务并创建 API Key 后即可调用。
-- **自托管服务**：先按照仓库 [README_CN.md](README_CN.md#推理和部署) 使用
-  vLLM 或 SGLang 启动 Hy3，再调用本地 OpenAI 兼容接口。
+- **自托管 API**：先按照仓库 [README_CN.md](README_CN.md#推理和部署) 使用
+  vLLM 或 SGLang 部署 Hy3，再调用该服务提供的 OpenAI 兼容接口。
+
+本文只说明两种服务的 API 调用方式，不包含模型下载、GPU 规划或服务部署步骤。
 
 ## 1. 基础信息
 
@@ -322,15 +324,15 @@ full_text = "".join(parts)
 
 | 说明文档 | 示例脚本 | 演示内容 |
 | --- | --- | --- |
-| [基础对话](examples/api/01_basic_chat.md) | [`01_basic_chat.py`](examples/api/01_basic_chat.py) | 单轮、多轮及 usage |
-| [流式输出](examples/api/02_streaming.md) | [`02_streaming.py`](examples/api/02_streaming.py) | 逐 chunk 解析与聚合 |
-| [时延对比](examples/api/03_streaming_vs_non_streaming.md) | [`03_streaming_vs_non_streaming.py`](examples/api/03_streaming_vs_non_streaming.py) | TTFT 与总耗时 |
-| [工具调用](examples/api/04_tool_calling.md) | [`04_tool_calling.py`](examples/api/04_tool_calling.py) | 一次调用及有界工具循环 |
-| [思考模式](examples/api/05_reasoning_mode.md) | [`05_reasoning_mode.py`](examples/api/05_reasoning_mode.py) | `no_think` 与 `high` 对比 |
-| [错误重试](examples/api/06_error_handling_retry.md) | [`06_error_handling_retry.py`](examples/api/06_error_handling_retry.py) | 错误分类与指数退避 |
+| [基础对话](examples/api/01_basic_chat_CN.md) | [`01_basic_chat.py`](examples/api/01_basic_chat.py) | 单轮、多轮及 usage |
+| [流式输出](examples/api/02_streaming_CN.md) | [`02_streaming.py`](examples/api/02_streaming.py) | 逐 chunk 解析与聚合 |
+| [时延对比](examples/api/03_streaming_vs_non_streaming_CN.md) | [`03_streaming_vs_non_streaming.py`](examples/api/03_streaming_vs_non_streaming.py) | TTFT 与总耗时 |
+| [工具调用](examples/api/04_tool_calling_CN.md) | [`04_tool_calling.py`](examples/api/04_tool_calling.py) | 一次调用及有界工具循环 |
+| [思考模式](examples/api/05_reasoning_mode_CN.md) | [`05_reasoning_mode.py`](examples/api/05_reasoning_mode.py) | `no_think` 与 `high` 对比 |
+| [错误重试](examples/api/06_error_handling_retry_CN.md) | [`06_error_handling_retry.py`](examples/api/06_error_handling_retry.py) | 错误分类与指数退避 |
 
 每个说明文档均包含请求流程、响应解析、注意事项和脱敏输出示例。安装及运行方式见
-[`examples/api/README.md`](examples/api/README.md)。
+[`examples/api/README_CN.md`](examples/api/README_CN.md)。
 
 ## 9. 常见错误排查
 

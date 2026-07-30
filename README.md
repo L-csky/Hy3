@@ -111,10 +111,14 @@ Model usefulness is not fully captured by benchmarks. Based on extensive product
 
 ## Quickstart
 
-For a hosted/local API walkthrough and six runnable examples, see
-[Hy3 API Quickstart](quickstart.md) and [`examples/api`](examples/api/README.md).
+Hy3 supports two API access modes: call the TokenHub hosted API directly, or
+deploy the model with [vLLM](#vllm) / [SGLang](#sglang) and call the
+self-hosted OpenAI-compatible API. For request parameters, client usage, and
+six runnable examples, see [Hy3 API Quickstart](quickstart.md) and
+[`examples/api`](examples/api/README.md). For model serving instructions, see
+[Deployment](#deployment) below.
 
-Deploy Hy3 with [vLLM](#vllm) or [SGLang](#sglang) first, then call the OpenAI-compatible API:
+The following code calls an already deployed local service:
 
 ```python
 from openai import OpenAI
@@ -137,8 +141,6 @@ print(response.choices[0].message.content)
 > **Recommended parameters**: `temperature=0.9`, `top_p=1.0`.
 >
 > **Reasoning mode**: Set `reasoning_effort` to `"high"` for complex tasks (math, coding, reasoning) or `"no_think"` for direct responses.
-
-See the [Deployment](#deployment) section below for how to start the API server.
 
 ## Deployment
 
