@@ -108,6 +108,9 @@ Hy3 在软件开发、办公生产、金融建模、前端设计、游戏制作�
 
 ## 快速开始
 
+如需五分钟完成云端/本地 API 调用并学习六个可运行示例，请参阅
+[Hy3 API 中文快速开始](quickstart_CN.md) 和 [`examples/api`](examples/api/README.md)。
+
 建议先通过 [vLLM](#使用-vllm-推理) 或 [SGLang](#使用-sglang-推理) 部署服务，然后通过 OpenAI 兼容 API 调用：
 
 ```python

@@ -8,3 +8,24 @@
 Thumbs.db
 __pycache__/
 *.pyc
+
+# Local API example environments and test artifacts
+.env
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local task notes and tooling (not part of Issue #1 deliverables)
+.codemap/
+myTODO.md
+CHANGELOG.md
+
+# Local validation assets (not part of Issue #1 deliverables)
+examples/api/TESTING.md
+examples/api/tests/
+examples/api/requirements-dev.txt
+examples/api/pyproject.toml
+examples/api/Dockerfile.test
+examples/api/.dockerignore
